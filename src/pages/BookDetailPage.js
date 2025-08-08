@@ -12,7 +12,7 @@ const BookDetailPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:5000/api/books/${id}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`)
       .then(res => res.json())
       .then(data => {
         setBook(data);

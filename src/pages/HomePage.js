@@ -9,7 +9,7 @@ const HomePage = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/books')
+    fetch(`${process.env.REACT_APP_API_URL}/api/books`)
       .then(response => response.json())
       .then(data => setBooks(data))
       .catch(error => console.error('Error fetching data:', error));
@@ -26,7 +26,7 @@ const HomePage = () => {
     }
 
     try {
-      await fetch(`http://localhost:5000/api/books/${idToDelete}`, {
+      await fetch(`${process.env.REACT_APP_API_URL}/api/books/${idToDelete}`, {
         method: 'DELETE',
         headers: {
           'x-auth-token': token, // Send the token for authorization

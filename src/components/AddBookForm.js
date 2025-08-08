@@ -20,7 +20,7 @@ const AddBookForm = ({ onBookAdded }) => {
 
     const newBook = { title, author, description, price: Number(price) };
 
-    fetch('http://localhost:5000/api/books', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/books`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

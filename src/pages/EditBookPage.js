@@ -17,7 +17,7 @@ const EditBookPage = () => {
 
   // useEffect to fetch the book data when the component loads
   useEffect(() => {
-    fetch(`http://localhost:5000/api/books/${id}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`)
       .then(res => res.json())
       .then(data => {
         // Pre-fill the form with the fetched book data
@@ -34,7 +34,7 @@ const EditBookPage = () => {
     const updatedBook = { title, author, description, price: Number(price) };
 
     try {
-      const response = await fetch(`http://localhost:5000/api/books/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
