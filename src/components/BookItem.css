@@ -1,0 +1,88 @@
+/* src/components/BookItem.css */
+.book-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.book-item:hover {
+  transform: translateY(-5px);
+}
+
+.book-cover {
+  background-color: #eee;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.book-details h3 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.book-details p {
+  margin: 0.25rem 0;
+  color: #555;
+}
+
+.book-price {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+/* Add this to src/components/BookItem.css */
+.delete-btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* Add these styles to src/components/BookItem.css */
+.admin-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.edit-btn {
+  padding: 5px 10px;
+  background-color: #ffc107;
+  color: #212529;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+.edit-btn:hover {
+  background-color: #e0a800;
+}
+
+/* Add this to src/components/BookItem.css */
+.book-item-link {
+  text-decoration: none;
+  color: inherit;
+}
