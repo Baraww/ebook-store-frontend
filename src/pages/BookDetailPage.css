@@ -58,3 +58,24 @@
 .add-to-cart-btn:hover {
   background-color: #218838;
 }
+
+/* This code runs only if the screen is 768px wide or less */
+@media (max-width: 768px) {
+  .book-detail-container {
+    /* Stack the image and info vertically */
+    grid-template-columns: 1fr;
+  }
+
+  .book-detail-image {
+    /* Make the image placeholder shorter on mobile */
+    height: 350px;
+  }
+
+  .book-detail-info h1 {
+    font-size: 2rem;
+  }
+
+  .book-detail-info h2 {
+    font-size: 1.2rem;
+  }
+}
