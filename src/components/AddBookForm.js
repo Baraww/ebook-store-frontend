@@ -1,58 +1,73 @@
 // src/components/AddBookForm.js
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; // 1. Import useAuth
+import { useAuth } from '../context/AuthContext';
 import './AddBookForm.css';
 
 const AddBookForm = ({ onBookAdded }) => {
-  const { token } = useAuth(); // 2. Get the token from our context
+  const { token } = useAuth();
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [image, setImage] = useState(null); // State for the image file
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!token) {
-      alert('You must be logged in to add a book.');
-      return;
-    }
+    // 1. UPLOAD THE IMAGE TO CLOUDINARY
+    const formData = new FormData();
+    formData.append('file', image);
+    // Replace 'your_preset_name' with the name you copied from Cloudinary
+    formData.append('upload_preset', 'etybpx14'); 
 
-    const newBook = { title, author, description, price: Number(price) };
+    // Replace 'your_cloud_name' with your Cloudinary cloud name
+    const cloudinaryResponse = await fetch(
+      `https://api.cloudinary.com/v1_1/djdidad15/image/upload`, 
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+    const cloudinaryData = await cloudinaryResponse.json();
+    const coverImage = cloudinaryData.secure_url; // Get the image URL
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/books`, {
+    // 2. SEND THE BOOK DATA (WITH IMAGE URL) TO OUR BACKEND
+    const newBook = { title, author, description, price: Number(price), coverImage };
+
+    const backendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/books`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-auth-token': token, // 3. Add the token to the request headers
+        'x-auth-token': token,
       },
       body: JSON.stringify(newBook),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to add book. Are you logged in?');
-        }
-        return response.json();
-      })
-      .then(addedBook => {
-        onBookAdded(addedBook);
-        setTitle('');
-        setAuthor('');
-        setDescription('');
-        setPrice('');
-      })
-      .catch(error => console.error('Error adding book:', error));
+    });
+
+    if (!backendResponse.ok) {
+      throw new Error('Failed to add book.');
+    }
+
+    const addedBook = await backendResponse.json();
+    onBookAdded(addedBook);
+
+    // Clear form fields
+    setTitle('');
+    setAuthor('');
+    setDescription('');
+    setPrice('');
+    setImage(null);
   };
 
-  // The JSX part of the form remains the same
   return (
     <div className="add-book-form">
       <h2>Add a New Book</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <input type="text" placeholder="Author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
-        <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
-        <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required step="0.01" />
+        {/* ... other input fields ... */}
+        <input
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+          required
+        />
         <button type="submit">Add Book</button>
       </form>
     </div>
