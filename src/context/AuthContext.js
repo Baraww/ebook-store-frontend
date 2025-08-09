@@ -3,18 +3,23 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
 export const AuthProvider = ({ children }) => {
-  // Initialize token from localStorage
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
 
-  // This effect runs ONLY when the token changes (or on initial load)
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
         try {
-          const response = await fetch('http://localhost:5000/api/users/me', {
-            headers: { 'x-auth-token': token },
+          // This is the line we are fixing
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/me`, {
+            headers: {
+              'x-auth-token': token,
+            },
           });
           const data = await response.json();
           if (response.ok) {
@@ -28,12 +33,11 @@ export const AuthProvider = ({ children }) => {
         }
       }
     };
+
     fetchUser();
   }, [token]);
 
-  // This is the updated login function
-  const login = async (newToken) => {
-    // We set the token first, which will trigger the useEffect above
+  const login = (newToken) => {
     setToken(newToken);
     localStorage.setItem('token', newToken);
   };
@@ -49,8 +53,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  return useContext(AuthContext);
 };
