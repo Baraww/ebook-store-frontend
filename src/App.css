@@ -60,6 +60,7 @@ body {
 }
 
 /* Add these styles to src/App.css */
+/* Replace all previous 'nav' and '.nav-right' styles with this block */
 nav {
   background-color: #fff;
   padding: 1rem 2rem;
@@ -70,19 +71,20 @@ nav {
   margin-bottom: 2rem;
 }
 
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* This creates space between the items */
+}
+
 nav a {
   text-decoration: none;
   color: #333;
   font-weight: 500;
   padding: 0.5rem;
+  transition: color 0.2s;
 }
 
 nav a:hover {
   color: #007bff;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem; /* This creates space between the items */
 }

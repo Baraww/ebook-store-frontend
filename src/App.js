@@ -38,9 +38,12 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
+// Inside the return statement of your App component in src/App.js
 <nav>
-  <Link to="/">Home</Link>
-  <Link to="/contact">Contact</Link>
+  <div className="nav-left">
+    <Link to="/">Home</Link>
+    <Link to="/contact">Contact</Link>
+  </div>
   <div className="nav-right">
     {token ? (
       <button onClick={handleLogout} className="nav-link-button">Logout</button>
