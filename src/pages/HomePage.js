@@ -14,15 +14,43 @@ const HomePage = () => {
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    // ... (This useEffect for fetching all books remains the same)
+    const fetchAllBooks = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books`);
+        const data = await response.json();
+        setAllBooks(data);
+        setFilteredBooks(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllBooks();
   }, []);
 
   const handleBookAdded = (newBook) => {
-    // ... (This function remains the same)
+    const newBookList = [newBook, ...allBooks];
+    setAllBooks(newBookList);
+    setFilteredBooks(newBookList);
   };
 
   const handleDeleteBook = async (idToDelete) => {
-    // ... (This function remains the same)
+    if (!window.confirm('Are you sure you want to delete this book?')) return;
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/${idToDelete}`, {
+        method: 'DELETE',
+        headers: { 'x-auth-token': token },
+      });
+      if (!response.ok) throw new Error('Failed to delete book');
+
+      const newAllBooks = allBooks.filter(book => book._id !== idToDelete);
+      setAllBooks(newAllBooks);
+      setFilteredBooks(newAllBooks);
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      alert('Failed to delete book.');
+    }
   };
 
   const handleSearch = useCallback(async (query) => {
@@ -47,7 +75,12 @@ const HomePage = () => {
 
   return (
     <>
-      {user && user.role === 'admin' && ( /* ... admin form ... */ )}
+      {user && user.role === 'admin' && (
+        <>
+          <AddBookForm onBookAdded={handleBookAdded} />
+          <hr />
+        </>
+      )}
 
       <SearchBar onSearch={handleSearch} />
       {searchError && <p className="error-message">{searchError}</p>}
