@@ -5,20 +5,20 @@ import BookItem from '../components/BookItem';
 import AddBookForm from '../components/AddBookForm';
 
 const HomePage = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true); // 1. Add a loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/books`)
       .then(response => response.json())
       .then(data => {
         setBooks(data);
-        setLoading(false); // 2. Set loading to false after data is fetched
+        setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        setLoading(false); // Also set loading to false on error
+        setLoading(false);
       });
   }, []);
 
@@ -26,8 +26,30 @@ const HomePage = () => {
     setBooks([newBook, ...books]);
   };
 
+  // This is the complete, correct delete function
   const handleDeleteBook = async (idToDelete) => {
-    // ... (keep your existing delete handler)
+    if (!window.confirm('Are you sure you want to delete this book?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/${idToDelete}`, {
+        method: 'DELETE',
+        headers: {
+          'x-auth-token': token,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete book');
+      }
+
+      setBooks(books.filter(book => book._id !== idToDelete));
+
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      alert('Failed to delete book.');
+    }
   };
 
   return (
@@ -41,7 +63,6 @@ const HomePage = () => {
 
       <h1>Available Books</h1>
       <div className="book-list">
-        {/* 3. Update the display logic */}
         {loading ? (
           <p>Loading books...</p>
         ) : books.length > 0 ? (
