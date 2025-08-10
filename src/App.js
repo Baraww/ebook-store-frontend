@@ -11,6 +11,7 @@ import { useAuth } from './context/AuthContext';
 import { useCart } from './context/CartContext';
 import './App.css';
 import ContactPage from './pages/ContactPage'; // 1. Import ContactPage
+import ThankYouPage from './pages/ThankYouPage';
 
 
 
@@ -37,19 +38,22 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/contact">Contact</Link>
-          {token ? (
-            <button onClick={handleLogout} className="nav-link-button">Logout</button>
-          ) : (
-            <>
-              | <Link to="/register">Register</Link>
-              | <Link to="/login">Login</Link>
-            </>
-          )}
-          <CartLink />
-        </nav>
+        // Inside src/App.js
+<nav>
+  <Link to="/">Home</Link>
+  <Link to="/contact">Contact</Link>
+  <div className="nav-right">
+    {token ? (
+      <button onClick={handleLogout} className="nav-link-button">Logout</button>
+    ) : (
+      <>
+        <Link to="/register">Register</Link>
+        <Link to="/login">Login</Link>
+      </>
+    )}
+    <CartLink />
+  </div>
+</nav>
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -59,6 +63,7 @@ function App() {
             <Route path="/book/:id" element={<BookDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/contact" element={<ContactPage />} /> 
+            <Route path="/thank-you" element={<ThankYouPage />}/>
           </Routes>
         </main>
       </div>

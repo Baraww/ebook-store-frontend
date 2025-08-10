@@ -58,3 +58,31 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Add these styles to src/App.css */
+nav {
+  background-color: #fff;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 0.5rem;
+}
+
+nav a:hover {
+  color: #007bff;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* This creates space between the items */
+}

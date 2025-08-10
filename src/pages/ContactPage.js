@@ -10,7 +10,7 @@ const ContactPage = () => {
       <p>Have a question or comment? Fill out the form below and we'll get back to you.</p>
 
       {/* This is the Netlify Form */}
-      <form name="contact" method="POST" data-netlify="true">
+      <form name="contact" method="POST" data-netlify="true" action="/thank-you">
         {/* This hidden input is required by Netlify */}
         <input type="hidden" name="form-name" value="contact" />
 
