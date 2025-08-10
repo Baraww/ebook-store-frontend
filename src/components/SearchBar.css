@@ -1,4 +1,9 @@
 /* src/components/SearchBar.css */
+/* Add this to the top of src/components/SearchBar.css */
+.search-container {
+  max-width: 600px; /* Set a maximum width */
+  margin: 0 auto 2rem auto; /* Center the search bar */
+}
 .search-bar {
   display: flex;
   margin-bottom: 2rem;
