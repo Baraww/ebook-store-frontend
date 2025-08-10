@@ -58,7 +58,6 @@ function App() {
             <Route path="/book/:id" element={<BookDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/thank-you" element={<ThankYouPage />} />
           </Routes>
         </main>
       </div>
