@@ -35,9 +35,14 @@ const ContactPage = () => {
         <p>Have a question? Fill out the form below.</p>
       )}
 
-      <form name="contact" onSubmit={handleSubmit}>
+      <form name="contact" 
+  method="POST" 
+  data-netlify="true"
+  data-netlify-honeypot="bot-field"
+  onSubmit={handleSubmit}>
         {/* This hidden input is required for the JS submission method */}
         <input type="hidden" name="form-name" value="contact" />
+        <input type="hidden" name="bot-field" />
 
         <label>Your Name:</label>
         <input type="text" name="name" required />
