@@ -8,7 +8,6 @@ import EditBookPage from './pages/EditBookPage';
 import BookDetailPage from './pages/BookDetailPage';
 import CartPage from './pages/CartPage';
 import ContactPage from './pages/ContactPage';
-import ThankYouPage from './pages/ThankYouPage';
 import { useAuth } from './context/AuthContext';
 import { useCart } from './context/CartContext';
 import './App.css';
