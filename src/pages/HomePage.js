@@ -3,17 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import BookItem from '../components/BookItem';
 import AddBookForm from '../components/AddBookForm';
+import SearchBar from '../components/SearchBar'; // 1. Import the SearchBar
 
 const HomePage = () => {
   const { user, token } = useAuth();
-  const [books, setBooks] = useState([]);
+  const [allBooks, setAllBooks] = useState([]); // To store the original list
+  const [filteredBooks, setFilteredBooks] = useState([]); // To display
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/books`)
       .then(response => response.json())
       .then(data => {
-        setBooks(data);
+        setAllBooks(data);
+        setFilteredBooks(data); // Initially, show all books
         setLoading(false);
       })
       .catch(error => {
@@ -23,32 +26,30 @@ const HomePage = () => {
   }, []);
 
   const handleBookAdded = (newBook) => {
-    setBooks([newBook, ...books]);
+    setAllBooks([newBook, ...allBooks]);
+    setFilteredBooks([newBook, ...filteredBooks]);
   };
 
-  // This is the complete, correct delete function
   const handleDeleteBook = async (idToDelete) => {
-    if (!window.confirm('Are you sure you want to delete this book?')) {
+    // ... (keep your existing delete handler)
+    // Make sure it updates BOTH allBooks and filteredBooks state
+    setAllBooks(allBooks.filter(book => book._id !== idToDelete));
+    setFilteredBooks(filteredBooks.filter(book => book._id !== idToDelete));
+  };
+
+  // 2. This function handles the search
+  const handleSearch = async (query) => {
+    if (!query) {
+      setFilteredBooks(allBooks); // If search is empty, show all books
       return;
     }
-
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/${idToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          'x-auth-token': token,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete book');
-      }
-
-      setBooks(books.filter(book => book._id !== idToDelete));
-
+      // Call our new backend search endpoint
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/search?q=${query}`);
+      const data = await response.json();
+      setFilteredBooks(data); // Update the display with search results
     } catch (error) {
-      console.error('Error deleting book:', error);
-      alert('Failed to delete book.');
+      console.error('Error searching books:', error);
     }
   };
 
@@ -61,16 +62,19 @@ const HomePage = () => {
         </>
       )}
 
+      {/* 3. Render the SearchBar */}
+      <SearchBar onSearch={handleSearch} />
+
       <h1>Available Books</h1>
       <div className="book-list">
         {loading ? (
           <p>Loading books...</p>
-        ) : books.length > 0 ? (
-          books.map(book => (
+        ) : filteredBooks.length > 0 ? (
+          filteredBooks.map(book => (
             <BookItem key={book._id} book={book} onDelete={handleDeleteBook} />
           ))
         ) : (
-          <p>No books are currently available.</p>
+          <p>No books found matching your search.</p>
         )}
       </div>
     </>
