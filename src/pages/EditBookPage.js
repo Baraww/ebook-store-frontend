@@ -2,45 +2,51 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import '../components/AddBookForm.css'; // We can reuse the same form styling
+import '../components/AddBookForm.css';
 
 const EditBookPage = () => {
-  const { id } = useParams(); // Get the book ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
 
-  // State for each form field
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
+  const [bookData, setBookData] = useState({
+    title: '',
+    author: '',
+    description: '',
+    price: '',
+  });
 
-  // useEffect to fetch the book data when the component loads
   useEffect(() => {
+    // Fetch the book's current data to pre-fill the form
     fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`)
       .then(res => res.json())
       .then(data => {
-        // Pre-fill the form with the fetched book data
-        setTitle(data.title);
-        setAuthor(data.author);
-        setDescription(data.description);
-        setPrice(data.price);
+        setBookData(data);
       })
       .catch(err => console.error("Error fetching book:", err));
-  }, [id]); // This effect depends on the 'id' from the URL
+  }, [id]);
+
+  const handleChange = (e) => {
+    setBookData({
+      ...bookData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedBook = { title, author, description, price: Number(price) };
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token, // Send the token for admin authorization
+          'x-auth-token': token,
         },
-        body: JSON.stringify(updatedBook),
+        body: JSON.stringify({
+          ...bookData,
+          price: Number(bookData.price) 
+        }),
       });
 
       if (!response.ok) {
@@ -58,10 +64,20 @@ const EditBookPage = () => {
     <div className="add-book-form">
       <h1>Edit Book</h1>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <input type="text" placeholder="Author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
-        <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
-        <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required step="0.01" />
+        <label>Title:</label>
+        <input type="text" name="title" value={bookData.title} onChange={handleChange} required />
+
+        <label>Author:</label>
+        <input type="text" name="author" value={bookData.author} onChange={handleChange} required />
+
+        <label>Description:</label>
+        <textarea name="description" value={bookData.description} onChange={handleChange} required />
+
+        <label>Price:</label>
+        <input type="number" name="price" value={bookData.price} onChange={handleChange} required step="0.01" />
+
+        {/* Note: Image updating would be a more advanced feature. For now, we are just editing text. */}
+
         <button type="submit">Update Book</button>
       </form>
     </div>
