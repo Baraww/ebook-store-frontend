@@ -9,54 +9,60 @@ const EditBookPage = () => {
   const navigate = useNavigate();
   const { token } = useAuth();
 
-  const [bookData, setBookData] = useState({
-    title: '',
-    author: '',
-    description: '',
-    price: '',
-  });
+  const [bookData, setBookData] = useState({ title: '', author: '', description: '', price: '' });
+  const [newImage, setNewImage] = useState(null); // State for the new image file
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch the book's current data to pre-fill the form
     fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`)
       .then(res => res.json())
-      .then(data => {
-        setBookData(data);
-      })
+      .then(data => setBookData(data))
       .catch(err => console.error("Error fetching book:", err));
   }, [id]);
 
   const handleChange = (e) => {
-    setBookData({
-      ...bookData,
-      [e.target.name]: e.target.value,
-    });
+    setBookData({ ...bookData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    let coverImageUrl = bookData.coverImage; // Start with the existing image URL
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token,
-        },
-        body: JSON.stringify({
-          ...bookData,
-          price: Number(bookData.price) 
-        }),
-      });
+      // If a new image file has been selected, upload it to Cloudinary first
+      if (newImage) {
+        const formData = new FormData();
+        formData.append('file', newImage);
+        formData.append('upload_preset', 'etybpx14'); // !!! REPLACE
 
-      if (!response.ok) {
-        throw new Error('Failed to update book.');
+        const cloudinaryResponse = await fetch(
+          `https://api.cloudinary.com/v1_1/djdidad15/image/upload`, // !!! REPLACE
+          { method: 'POST', body: formData }
+        );
+        if (!cloudinaryResponse.ok) throw new Error('New image upload failed.');
+        const cloudinaryData = await cloudinaryResponse.json();
+        coverImageUrl = cloudinaryData.secure_url; // Get the new image URL
       }
 
+      // Now, update the book in our backend with all the data
+      const finalBookData = { ...bookData, coverImage: coverImageUrl, price: Number(bookData.price) };
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+        body: JSON.stringify(finalBookData),
+      });
+
+      if (!response.ok) throw new Error('Failed to update book.');
+
       alert('Book updated successfully!');
-      navigate('/'); // Redirect to homepage after successful update
+      navigate('/');
     } catch (error) {
       alert(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,9 +82,13 @@ const EditBookPage = () => {
         <label>Price:</label>
         <input type="number" name="price" value={bookData.price} onChange={handleChange} required step="0.01" />
 
-        {/* Note: Image updating would be a more advanced feature. For now, we are just editing text. */}
+        <label>Current Cover Image:</label>
+        {bookData.coverImage && <img src={bookData.coverImage} alt="Current cover" style={{ width: '100px', marginBottom: '10px' }} />}
 
-        <button type="submit">Update Book</button>
+        <label>Upload New Cover Image (Optional):</label>
+        <input type="file" accept="image/*" onChange={(e) => setNewImage(e.target.files[0])} />
+
+        <button type="submit" disabled={loading}>{loading ? 'Updating...' : 'Update Book'}</button>
       </form>
     </div>
   );
