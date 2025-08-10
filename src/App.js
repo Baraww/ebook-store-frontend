@@ -38,7 +38,6 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-// Inside the return statement of your App component in src/App.js
 <nav>
   <div className="nav-left">
     <Link to="/">Home</Link>
