@@ -8,7 +8,7 @@ const ContactPage = () => {
       <h1>Contact Us</h1>
       <p>Have a question or comment? Fill out the form below and we'll get back to you.</p>
       
-      <form name="contact" method="POST" data-netlify="true" action="/thank-you">
+      <form name="contact" method="POST" data-netlify="true" action="/thank-you.html">
         <input type="hidden" name="form-name" value="contact" />
         <label>Your Name:</label>
         <input type="text" name="name" required />
