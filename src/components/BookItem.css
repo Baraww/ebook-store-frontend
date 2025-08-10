@@ -1,16 +1,24 @@
 /* src/components/BookItem.css */
+.book-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .book-item {
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex; /* Use flexbox for better structure */
+  flex-direction: column; /* Stack children vertically */
+  height: 100%; /* Make all cards in a row the same height */
 }
 
 .book-item:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .book-cover {
@@ -20,49 +28,63 @@
   align-items: center;
   justify-content: center;
   color: #aaa;
-  margin-bottom: 1rem;
-  border-radius: 4px;
+  border-radius: 8px 8px 0 0; /* Only round the top corners */
+}
+
+.book-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 8px 8px 0 0;
+}
+
+.book-details {
+  padding: 1rem;
+  text-align: left; /* Key change: left-align text */
+  flex-grow: 1; /* Allow this section to grow to fill space */
+  display: flex;
+  flex-direction: column;
 }
 
 .book-details h3 {
   font-size: 1.1rem;
-  margin: 0.5rem 0;
+  margin: 0 0 0.25rem 0;
+  /* This handles long titles */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.book-details p {
-  margin: 0.25rem 0;
-  color: #555;
+.book-author {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 0.5rem 0;
+}
+
+.book-description {
+  font-size: 0.8rem;
+  color: #777;
+  line-height: 1.4;
+  flex-grow: 1; /* Pushes the price down */
 }
 
 .book-price {
   font-weight: bold;
   color: #333;
   font-size: 1.2rem;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem; /* Space above the price */
 }
 
-/* Add this to src/components/BookItem.css */
-.delete-btn {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-}
-
-.delete-btn:hover {
-  background-color: #c82333;
-}
-
-/* Add these styles to src/components/BookItem.css */
 .admin-actions {
   margin-top: 10px;
+  padding: 0 1rem 1rem; /* Add padding to align with book-details */
   display: flex;
-  justify-content: center;
   gap: 10px;
+}
+
+.edit-btn, .delete-btn {
+  /* Shared styles for buttons can go here */
 }
 
 .edit-btn {
@@ -81,8 +103,16 @@
   background-color: #e0a800;
 }
 
-/* Add this to src/components/BookItem.css */
-.book-item-link {
-  text-decoration: none;
-  color: inherit;
+.delete-btn {
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
 }

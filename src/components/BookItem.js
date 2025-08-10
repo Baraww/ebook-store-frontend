@@ -8,31 +8,36 @@ const BookItem = ({ book, onDelete }) => {
   const { user } = useAuth();
 
   return (
-    // This Link component makes the whole card clickable
-    <Link to={`/book/${book._id}`} className="book-item-link">
-      <div className="book-item">
+    <div className="book-item">
+      <Link to={`/book/${book._id}`} className="book-item-main-link">
         <div className="book-cover">
-          <span>No Image</span>
+          {book.coverImage ? (
+            <img src={book.coverImage} alt={book.title} />
+          ) : (
+            <span>No Image</span>
+          )}
         </div>
         <div className="book-details">
           <h3>{book.title}</h3>
-          <p>by {book.author}</p>
+          <p className="book-author">by {book.author}</p>
+          <p className="book-description">
+            {book.description.substring(0, 100)}...
+          </p>
           <p className="book-price">${book.price.toFixed(2)}</p>
         </div>
-        {/* Admin actions are kept separate so they don't trigger the link */}
-        {user && user.role === 'admin' && (
-          <div className="admin-actions" onClick={(e) => e.preventDefault()}>
-            <Link to={`/edit-book/${book._id}`} className="edit-btn">
-              Edit
-            </Link>
-            <button onClick={() => onDelete(book._id)} className="delete-btn">
-              Delete
-            </button>
-          </div>
-        )}
-      </div>
-    </Link>
+      </Link>
+      {user && user.role === 'admin' && (
+        <div className="admin-actions">
+          <Link to={`/edit-book/${book._id}`} className="edit-btn">
+            Edit
+          </Link>
+          <button onClick={() => onDelete(book._id)} className="delete-btn">
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
   );
-};
+}; // <-- This closing brace and semicolon was likely the missing part.
 
 export default BookItem;

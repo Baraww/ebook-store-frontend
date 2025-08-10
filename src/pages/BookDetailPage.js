@@ -35,8 +35,12 @@ const BookDetailPage = () => {
   return (
     <div className="book-detail-container">
       <div className="book-detail-image">
-        <span>Book Cover Image</span>
-      </div>
+        {book.coverImage ? (
+      <img src={book.coverImage} alt={book.title} />
+        ) : (
+    <span>Book Cover Image</span>
+        )}
+    </div>
       <div className="book-detail-info">
         <h1>{book.title}</h1>
         <h2>by {book.author}</h2>

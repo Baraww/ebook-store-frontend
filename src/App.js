@@ -6,33 +6,49 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import EditBookPage from './pages/EditBookPage';
 import BookDetailPage from './pages/BookDetailPage';
-import CartPage from './pages/CartPage'; // 1. Import CartPage
+import CartPage from './pages/CartPage';
 import { useAuth } from './context/AuthContext';
-import { useCart } from './context/CartContext'; // 2. Import useCart
+import { useCart } from './context/CartContext';
 import './App.css';
+import ContactPage from './pages/ContactPage'; // 1. Import ContactPage
+
+
+
+// A small, separate component to get the real-time cart count
+const CartLink = () => {
+  const { cartItems } = useCart();
+  const cartItemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  return (
+    <>
+      | <Link to="/cart">Cart ({cartItemCount})</Link>
+    </>
+  );
+};
 
 function App() {
   const { token, logout } = useAuth();
-  const { cartItems } = useCart(); // 3. Get cartItems from context
+  const { clearCart } = useCart();
 
-  // 4. Calculate total number of items in the cart
-  const cartItemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const handleLogout = () => {
+    logout();
+    clearCart();
+  };
 
   return (
     <BrowserRouter>
       <div className="App">
         <nav>
           <Link to="/">Home</Link>
+          <Link to="/contact">Contact</Link>
           {token ? (
-            <button onClick={logout} className="nav-link-button">Logout</button>
+            <button onClick={handleLogout} className="nav-link-button">Logout</button>
           ) : (
             <>
               | <Link to="/register">Register</Link>
               | <Link to="/login">Login</Link>
             </>
           )}
-          {/* 5. Add the link to the Cart page with the item count */}
-          | <Link to="/cart">Cart ({cartItemCount})</Link>
+          <CartLink />
         </nav>
         <main>
           <Routes>
@@ -41,7 +57,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/edit-book/:id" element={<EditBookPage />} />
             <Route path="/book/:id" element={<BookDetailPage />} />
-            <Route path="/cart" element={<CartPage />} /> {/* 6. Add the Cart route */}
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/contact" element={<ContactPage />} /> 
           </Routes>
         </main>
       </div>

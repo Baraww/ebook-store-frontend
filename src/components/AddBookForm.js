@@ -9,66 +9,76 @@ const AddBookForm = ({ onBookAdded }) => {
   const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [image, setImage] = useState(null); // State for the image file
+  const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // 1. UPLOAD THE IMAGE TO CLOUDINARY
-    const formData = new FormData();
-    formData.append('file', image);
-    // Replace 'your_preset_name' with the name you copied from Cloudinary
-    formData.append('upload_preset', 'etybpx14'); 
-
-    // Replace 'your_cloud_name' with your Cloudinary cloud name
-    const cloudinaryResponse = await fetch(
-      `https://api.cloudinary.com/v1_1/djdidad15/image/upload`, 
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
-    const cloudinaryData = await cloudinaryResponse.json();
-    const coverImage = cloudinaryData.secure_url; // Get the image URL
-
-    // 2. SEND THE BOOK DATA (WITH IMAGE URL) TO OUR BACKEND
-    const newBook = { title, author, description, price: Number(price), coverImage };
-
-    const backendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/books`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': token,
-      },
-      body: JSON.stringify(newBook),
-    });
-
-    if (!backendResponse.ok) {
-      throw new Error('Failed to add book.');
+    if (!image) {
+      alert('Please select a cover image.');
+      return;
     }
+    setUploading(true);
 
-    const addedBook = await backendResponse.json();
-    onBookAdded(addedBook);
+    try {
+      // 1. UPLOAD THE IMAGE TO CLOUDINARY
+      const formData = new FormData();
+      formData.append('file', image);
+      // !!! REPLACE WITH YOUR UPLOAD PRESET NAME !!!
+      formData.append('upload_preset', 'etybpx14'); 
 
-    // Clear form fields
-    setTitle('');
-    setAuthor('');
-    setDescription('');
-    setPrice('');
-    setImage(null);
+      // !!! REPLACE WITH YOUR CLOUD NAME !!!
+      const cloudinaryResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/djdidad15/image/upload`, 
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!cloudinaryResponse.ok) throw new Error('Image upload failed.');
+      const cloudinaryData = await cloudinaryResponse.json();
+      const coverImage = cloudinaryData.secure_url;
+
+      // 2. SEND THE BOOK DATA (WITH IMAGE URL) TO OUR BACKEND
+      const newBook = { title, author, description, price: Number(price), coverImage };
+      const backendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/books`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+        body: JSON.stringify(newBook),
+      });
+
+      if (!backendResponse.ok) throw new Error('Failed to add book to database.');
+      const addedBook = await backendResponse.json();
+
+      onBookAdded(addedBook);
+
+      // Clear form fields
+      e.target.reset(); 
+      setTitle('');
+      setAuthor('');
+      setDescription('');
+      setPrice('');
+      setImage(null);
+
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
     <div className="add-book-form">
       <h2>Add a New Book</h2>
       <form onSubmit={handleSubmit}>
-        {/* ... other input fields ... */}
-        <input
-          type="file"
-          onChange={(e) => setImage(e.target.files[0])}
-          required
-        />
-        <button type="submit">Add Book</button>
+        <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <input type="text" placeholder="Author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
+        <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+        <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required step="0.01" />
+        <label>Cover Image:</label>
+        <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} required />
+        <button type="submit" disabled={uploading}>{uploading ? 'Uploading...' : 'Add Book'}</button>
       </form>
     </div>
   );

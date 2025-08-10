@@ -8,7 +8,6 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  // 1. Load the initial cart state from localStorage
   const [cartItems, setCartItems] = useState(() => {
     try {
       const localData = localStorage.getItem('cart');
@@ -18,12 +17,11 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // 2. Save the cart state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-
+  // THIS FUNCTION WAS LIKELY MISSING
   const addToCart = (book) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item._id === book._id);
@@ -38,10 +36,12 @@ export const CartProvider = ({ children }) => {
     alert(`${book.title} was added to your cart!`);
   };
 
+  // THIS FUNCTION WAS LIKELY MISSING
   const removeFromCart = (bookId) => {
     setCartItems(prevItems => prevItems.filter(item => item._id !== bookId));
   };
 
+  // THIS FUNCTION WAS LIKELY MISSING
   const updateQuantity = (bookId, amount) => {
     setCartItems(prevItems =>
       prevItems.map(item => {
@@ -54,11 +54,16 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   const value = {
     cartItems,
     addToCart,
     removeFromCart,
     updateQuantity,
+    clearCart,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
