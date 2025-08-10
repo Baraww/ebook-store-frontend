@@ -38,7 +38,6 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        // Inside src/App.js
 <nav>
   <Link to="/">Home</Link>
   <Link to="/contact">Contact</Link>
