@@ -40,3 +40,18 @@
 .add-book-form button:hover {
   background-color: #0056b3;
 }
+
+.success {
+  color: #28a745;
+  font-weight: bold;
+  background-color: #e9f7ec;
+  padding: 10px;
+  border-radius: 4px;
+}
+.error {
+  color: #dc3545;
+  font-weight: bold;
+  background-color: #f8d7da;
+  padding: 10px;
+  border-radius: 4px;
+}
