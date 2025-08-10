@@ -8,8 +8,15 @@ const ContactPage = () => {
       <h1>Contact Us</h1>
       <p>Have a question or comment? Fill out the form below and we'll get back to you.</p>
 
-      <form name="contact" method="POST" data-netlify="true" action="/thank-you.html">
+      <form 
+        name="contact" 
+        method="POST" 
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+      >
+        {/* These hidden inputs are required by Netlify */}
         <input type="hidden" name="form-name" value="contact" />
+        <input type="hidden" name="bot-field" />
 
         <label>Your Name:</label>
         <input type="text" name="name" required />
