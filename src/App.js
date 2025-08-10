@@ -7,22 +7,17 @@ import LoginPage from './pages/LoginPage';
 import EditBookPage from './pages/EditBookPage';
 import BookDetailPage from './pages/BookDetailPage';
 import CartPage from './pages/CartPage';
+import ContactPage from './pages/ContactPage';
+import ThankYouPage from './pages/ThankYouPage';
 import { useAuth } from './context/AuthContext';
 import { useCart } from './context/CartContext';
 import './App.css';
-import ContactPage from './pages/ContactPage'; // 1. Import ContactPage
-import ThankYouPage from './pages/ThankYouPage';
 
-
-
-// A small, separate component to get the real-time cart count
 const CartLink = () => {
   const { cartItems } = useCart();
   const cartItemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
   return (
-    <>
-      | <Link to="/cart">Cart ({cartItemCount})</Link>
-    </>
+    <Link to="/cart">Cart ({cartItemCount})</Link>
   );
 };
 
@@ -38,23 +33,23 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-<nav>
-  <div className="nav-left">
-    <Link to="/">Home</Link>
-    <Link to="/contact">Contact</Link>
-  </div>
-  <div className="nav-right">
-    {token ? (
-      <button onClick={handleLogout} className="nav-link-button">Logout</button>
-    ) : (
-      <>
-        <Link to="/register">Register</Link>
-        <Link to="/login">Login</Link>
-      </>
-    )}
-    <CartLink />
-  </div>
-</nav>
+        <nav>
+          <div className="nav-left">
+            <Link to="/">Home</Link>
+            <Link to="/contact">Contact</Link>
+          </div>
+          <div className="nav-right">
+            {token ? (
+              <button onClick={handleLogout} className="nav-link-button">Logout</button>
+            ) : (
+              <>
+                <Link to="/register">Register</Link>
+                <Link to="/login">Login</Link>
+              </>
+            )}
+            <CartLink />
+          </div>
+        </nav>
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -63,13 +58,13 @@ function App() {
             <Route path="/edit-book/:id" element={<EditBookPage />} />
             <Route path="/book/:id" element={<BookDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
-            <Route path="/contact" element={<ContactPage />} /> 
-            <Route path="/thank-you" element={<ThankYouPage />}/>
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
           </Routes>
         </main>
       </div>
     </BrowserRouter>
   );
-};
+}
 
 export default App;
